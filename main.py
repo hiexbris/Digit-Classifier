@@ -1,10 +1,10 @@
 import torchvision.datasets as datasets
-import numpy as np
+import numpy as np   
 
 
 def softmax(Z3):
     exp_Z3 = np.exp(Z3 - np.max(Z3, axis=0))  
-    return exp_Z3 / np.sum(exp_Z3, axis=0, keepdims=True)
+    return exp_Z3 / (np.sum(exp_Z3, axis=0, keepdims=True) + 1e-8)
 
 
 def load_data():
@@ -19,11 +19,12 @@ def load_data():
 
 
 x_train, y_train = load_data()
+x_train = x_train.astype(np.float32) / 255.0
 
 def check_image(x_train, y_train, num): 
 
     first_image = np.zeros(784)  
-    first_image[:728] = x_train[:, num]  
+    first_image[:784] = x_train[:, num]  
     first_image = first_image.reshape(28, 28) 
     print(y_train[0, num])
     from PIL import Image
@@ -34,7 +35,6 @@ def check_image(x_train, y_train, num):
 # check_image(x_train, y_train, num=1000)
 y_train = np.eye(10)[y_train].squeeze().T  
 
-print(x_train.shape)
 
 W1 = np.random.randn(128, 784) * np.sqrt(2 / 784)
 W2 = np.random.randn(128, 128) * np.sqrt(2 / 128)
@@ -45,47 +45,48 @@ B3 = np.zeros((10, 1))
 
 alpha = 0.01
 batch = 32
+lambda_reg = 0.001
 
-for i in range(0, x_train.shape[1], batch):  
-    S0 = x_train[:, i:i + batch]  
-    Y = y_train[:, i:i + batch]
+for epoch in range(10):
+    for i in range(0, x_train.shape[1], batch):  
+        S0 = x_train[:, i:i + batch]  
+        Y = y_train[:, i:i + batch]
 
-    Z1 = np.dot(W1, S0) + B1
-    S1 = np.maximum(0, Z1)
+        Z1 = np.dot(W1, S0) + B1
+        S1 = np.maximum(0, Z1)
 
-    Z2 = np.dot(W2, S1) + B2
-    S2 = np.maximum(0, Z2)
+        Z2 = np.dot(W2, S1) + B2
+        S2 = np.maximum(0, Z2)
 
-    Z3 = np.dot(W3, S2) + B3
-    S3 = softmax(Z3)
+        Z3 = np.dot(W3, S2) + B3
+        S3 = softmax(Z3)
+        
+        # E3 = Y * np.log(S3 + epsilon) + (1 - Y) * np.log(1 - S3 + epsilon)
+        E3 = S3 - Y
 
-    E3 = Y * np.log(S3) + (1 - Y) * np.log(1 - S3)
+        Z2 = np.where(Z2 > 0, 1, 0)
+        E2 = np.dot(W3.T, E3) * Z2
 
-    Z2 = np.where(Z2 > 0, 1, 0)
-    E2 = np.dot(W3.T, E3) * Z2
+        Z1 = np.where(Z1 > 0, 1, 0)
+        E1 = np.dot(W2.T, E2) * Z1
 
-    Z1 = np.where(Z1 > 0, 1, 0)
-    E1 = np.dot(W2.T, E2) * Z1
+        F3 = np.dot(E3, S2.T) / batch
+        F2 = np.dot(E2, S1.T) / batch
+        F1 = np.dot(E1, S0.T) / batch
 
-    F3 = np.dot(E3, S2.T) / batch
+        W3 = W3 - (alpha)*F3
+        W2 = W2 - (alpha)*F2
+        W1 = W1 - (alpha)*F1
 
-    F2 = np.dot(E2, S1.T) / batch
+        E3 = np.mean(E3, axis=1).reshape(10, 1)
+        E2 = np.mean(E2, axis=1).reshape(128, 1)
+        E1 = np.mean(E1, axis=1).reshape(128, 1)
 
-    F1 = np.dot(E1, S0.T) / batch
+        B3 = B3 - (alpha)*E3
+        B2 = B2 - (alpha)*E2
+        B1 = B1 - (alpha)*E1
 
-    W3 = W3 - (alpha)*F3
-    W2 = W2 - (alpha)*F2
-    W1 = W1 - (alpha)*F1
-
-    E3 = np.mean(E3, axis=1)
-    E2 = np.mean(E2, axis=1)
-    E1 = np.mean(E1, axis=1)
-
-    B3 = B3 - (alpha)*E3
-    B2 = B2 - (alpha)*E2
-    B1 = B1 - (alpha)*E1
-
-    del S0, Y, Z1, S1, Z2, S2, Z3, S3, F1, F2, F3, E3, E2, E1
+        del S0, Y, Z1, S1, Z2, S2, Z3, S3, F1, F2, F3, E3, E2, E1
 
 
 def load_test():
@@ -99,6 +100,7 @@ def load_test():
 
 
 x_test, y_test = load_test()
+x_test = x_test.astype(np.float32) / 255.0
 
 Z1 = np.dot(W1, x_test) + B1
 S1 = np.maximum(0, Z1)
