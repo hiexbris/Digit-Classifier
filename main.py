@@ -45,10 +45,11 @@ B2 = np.zeros((128, 1))
 B3 = np.zeros((10, 1))
 
 alpha = 0.01
-batch = 32
+batch = 1
 
 for epoch in range(5):
     for i in range(0, x_train.shape[1], batch):  
+        print(epoch, i)
         S0 = x_train[:, i:i + batch]  
         Y = y_train[:, i:i + batch]
 
@@ -62,7 +63,7 @@ for epoch in range(5):
         S3 = softmax(Z3)
         
         # E3 = Y * np.log(S3 + epsilon) + (1 - Y) * np.log(1 - S3 + epsilon)
-        E3 = S3 - Y
+        E3 = S3 - Y 
 
         Z2 = np.where(Z2 > 0, 1, 0)
         E2 = np.dot(W3.T, E3) * Z2
