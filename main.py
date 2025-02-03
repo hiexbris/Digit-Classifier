@@ -32,7 +32,7 @@ def check_image(x_train, y_train, num):
     image.save("Image.png")
 
 
-check_image(x_train, y_train, num=0)
+# check_image(x_train, y_train, num=0)
 x_train = x_train.astype(np.float32) / 255.0
 y_train = np.eye(10)[y_train].squeeze().T  
 
@@ -85,7 +85,6 @@ for epoch in range(5):
         B3 = B3 - (alpha)*E3
         B2 = B2 - (alpha)*E2
         B1 = B1 - (alpha)*E1
-        print('repeat')
 
         del S0, Y, Z1, S1, Z2, S2, Z3, S3, F1, F2, F3, E3, E2, E1
 
