@@ -19,7 +19,7 @@ def load_data():
 
 
 x_train, y_train = load_data()
-x_train = x_train.astype(np.float32) / 255.0
+
 
 def check_image(x_train, y_train, num): 
 
@@ -32,7 +32,8 @@ def check_image(x_train, y_train, num):
     image.save("Image.png")
 
 
-# check_image(x_train, y_train, num=1000)
+check_image(x_train, y_train, num=0)
+x_train = x_train.astype(np.float32) / 255.0
 y_train = np.eye(10)[y_train].squeeze().T  
 
 
@@ -45,9 +46,8 @@ B3 = np.zeros((10, 1))
 
 alpha = 0.01
 batch = 32
-lambda_reg = 0.001
 
-for epoch in range(10):
+for epoch in range(5):
     for i in range(0, x_train.shape[1], batch):  
         S0 = x_train[:, i:i + batch]  
         Y = y_train[:, i:i + batch]
@@ -85,6 +85,7 @@ for epoch in range(10):
         B3 = B3 - (alpha)*E3
         B2 = B2 - (alpha)*E2
         B1 = B1 - (alpha)*E1
+        print('repeat')
 
         del S0, Y, Z1, S1, Z2, S2, Z3, S3, F1, F2, F3, E3, E2, E1
 
@@ -124,3 +125,16 @@ results.to_csv('predictions_comparison.csv', index=False)
 
 accuracy = np.mean(predictions == y_test)
 print(f"Accuracy: {accuracy:.4f}")
+
+import torch
+
+weights = {
+    'W1': W1,
+    'W2': W2,
+    'W3': W3,
+    'B1': B1,
+    'B2': B2,
+    'B3': B3
+}
+
+torch.save(weights, 'weights.pth')
