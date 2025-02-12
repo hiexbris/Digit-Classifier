@@ -37,7 +37,7 @@ def load_test():
     return x_test, y_test
 
 
-x_train, y_train = load_data()
+x_train, y_train_orig = load_data()
 
 
 def check_image(x_train, y_train, num): 
@@ -53,7 +53,7 @@ def check_image(x_train, y_train, num):
 
 # check_image(x_train, y_train, num=0)
 x_train = x_train.astype(np.float32) / 255.0
-y_train = np.eye(10)[y_train].squeeze().T  
+y_train = np.eye(10)[y_train_orig].squeeze().T  
 
 
 x_test, y_test = load_test()
@@ -71,7 +71,7 @@ learning_rate = [0.5, 0.1, 0.01, 0.001]
 batch = 60000
 
 for alpha in learning_rate:
-    for i in range(100):
+    for i in range(1000):
         Y = y_train
 
         Z1 = np.dot(W1, x_train) + B1
@@ -146,8 +146,7 @@ for alpha in learning_rate:
     S3 = softmax(Z3)
 
     predictions = np.argmax(S3, axis=0).reshape(1, 60000)
-    accuracy = np.mean(predictions == y_train)
-
+    accuracy = np.mean(predictions == y_train_orig)
     print(f"Accuracy for train_{alpha}: {accuracy:.4f}")
     print('')
 

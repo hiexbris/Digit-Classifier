@@ -15,7 +15,7 @@ BRIGHT_BLUE = (100, 100, 200)
 WHITE = (230, 230, 255)
 
 # Load weights
-weights = torch.load('weights.pth')
+weights = torch.load('weights_0.001.pth')
 W1 = weights['W1']
 W2 = weights['W2']
 W3 = weights['W3']
