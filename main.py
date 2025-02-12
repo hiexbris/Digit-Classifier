@@ -63,6 +63,7 @@ for epoch in range(5):
         S3 = softmax(Z3)
         
         # E3 = Y * np.log(S3 + epsilon) + (1 - Y) * np.log(1 - S3 + epsilon)
+        loss = -np.sum(Y*np.log(S3 + 1e-8)) / batch
         E3 = S3 - Y 
 
         Z2 = np.where(Z2 > 0, 1, 0)
