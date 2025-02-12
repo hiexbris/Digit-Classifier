@@ -71,7 +71,7 @@ learning_rate = [0.5, 0.1, 0.01, 0.001]
 batch = 60000
 
 for alpha in learning_rate:
-    for i in range(1000):
+    for i in range(100):
         Y = y_train
 
         Z1 = np.dot(W1, x_train) + B1
@@ -145,11 +145,11 @@ for alpha in learning_rate:
     Z3 = np.dot(W3, S2) + B3
     S3 = softmax(Z3)
 
+    predictions = np.argmax(S3, axis=0).reshape(1, 10000)
     results = pd.DataFrame({
         'Predicted': predictions.flatten(),
         'Actual': y_train.flatten()
     })
-    predictions = np.argmax(S3, axis=0).reshape(1, 10000)
     accuracy = np.mean(predictions == y_train)
 
     print(f"Accuracy for train_{alpha}: {accuracy:.4f}")
