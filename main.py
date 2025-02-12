@@ -145,11 +145,7 @@ for alpha in learning_rate:
     Z3 = np.dot(W3, S2) + B3
     S3 = softmax(Z3)
 
-    predictions = np.argmax(S3, axis=0).reshape(1, 10000)
-    results = pd.DataFrame({
-        'Predicted': predictions.flatten(),
-        'Actual': y_train.flatten()
-    })
+    predictions = np.argmax(S3, axis=0).reshape(1, 60000)
     accuracy = np.mean(predictions == y_train)
 
     print(f"Accuracy for train_{alpha}: {accuracy:.4f}")
