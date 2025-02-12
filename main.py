@@ -3,6 +3,13 @@ import numpy as np
 import pandas as pd
 import torch
 
+cost_history = {
+    'lr0.1': [],
+    'lr0.01': [],
+    'lr0.001': [],
+    'lr0.5': []
+}
+
 
 def softmax(Z3):
     exp_Z3 = np.exp(Z3 - np.max(Z3, axis=0))  
@@ -88,7 +95,7 @@ for alpha in learning_rate:
 
         F3 = np.dot(E3, S2.T) / batch
         F2 = np.dot(E2, S1.T) / batch
-        F1 = np.dot(E1, S0.T) / batch
+        F1 = np.dot(E1, x_train.T) / batch
 
         W3 = W3 - (alpha)*F3
         W2 = W2 - (alpha)*F2
@@ -106,6 +113,8 @@ for alpha in learning_rate:
 
         if i % 100 == 0:
             print(f"loss for {alpha} at {i}th iteration is: {loss}")
+        
+        cost_history[f'lr{alpha}'].append(loss)
 
     Z1 = np.dot(W1, x_test) + B1
     S1 = np.maximum(0, Z1)
@@ -156,3 +165,34 @@ for alpha in learning_rate:
     }
 
     torch.save(weights, f'weights_{alpha}.pth')
+
+
+import matplotlib.pyplot as plt
+def plot_learning_rates():
+    plt.figure(figsize=(10, 6))
+    
+    colors = {
+        'lr0.1': 'red',
+        'lr0.01': 'blue',
+        'lr0.001': 'green',
+        'lr0.5': 'black'
+    }
+    
+    for lr_key in cost_history:
+        iterations = range(len(cost_history[lr_key]))
+        plt.plot(iterations, cost_history[lr_key], 
+                label=lr_key, 
+                color=colors[lr_key],
+                alpha=0.7)
+    
+    plt.title('Training Cost vs Iterations')
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('learning_rate_comparison.png')
+    plt.show()
+
+
+# Generate the plot
+plot_learning_rates()
