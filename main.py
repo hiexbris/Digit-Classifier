@@ -67,7 +67,7 @@ B1 = np.zeros((128, 1))
 B2 = np.zeros((128, 1))
 B3 = np.zeros((10, 1))
 
-learning_rate = [0.1]
+learning_rate = [0.5, 0.1, 0.01]
 batch = 60000
 
 for alpha in learning_rate:
