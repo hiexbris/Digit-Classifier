@@ -67,14 +67,22 @@ B1 = np.zeros((128, 1))
 B2 = np.zeros((128, 1))
 B3 = np.zeros((10, 1))
 
-learning_rate = [0.5, 0.1, 0.01, 0.001]
+learning_rate = [0.1]
 batch = 60000
 
 for alpha in learning_rate:
-    for i in range(1000):
+
+    W1 = np.random.randn(128, 784) * np.sqrt(2 / 784)
+    W2 = np.random.randn(128, 128) * np.sqrt(2 / 128)
+    W3 = np.random.randn(10, 128) * np.sqrt(2 / 128)
+    B1 = np.zeros((128, 1))
+    B2 = np.zeros((128, 1))
+    B3 = np.zeros((10, 1))
+
+    for i in range(100):
         Y = y_train
 
-        Z1 = np.dot(W1, x_train) + B1
+        Z1 = np.dot(W1, x_train) + B1   
         S1 = np.maximum(0, Z1)
 
         Z2 = np.dot(W2, S1) + B2
