@@ -1,13 +1,12 @@
-# 🧠 Handwritten Digit Recognition with Neural Networks
+# ✍️ Handwritten Digit Recognizer (from Scratch)
 
-This project implements a simple neural network to recognize **handwritten digits** using the MNIST dataset. After training the model, you can draw digits in a Pygame window, and the model will predict the number in real-time!
+This is a simple neural network built **entirely from scratch (no PyTorch or TensorFlow)** to recognize handwritten digits from the MNIST dataset. After training, you can draw digits using a `pygame` interface, and the model will predict what you wrote.
 
 ---
 
-## 📂 Project Structure
+## 📁 Files
 
 ```bash
 .
-├── train.py      # Train the neural network on MNIST
-├── app.py        # Pygame-based drawing app for testing the model
-├── model.pth     # (Auto-generated) Trained model weights
+├── main.py   # Trains a neural network from scratch using MNIST data
+├── app.py    # Launches a pygame app to draw digits and predict them
